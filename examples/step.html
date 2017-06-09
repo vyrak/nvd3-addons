@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+<head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.5/nv.d3.css">
+</head>
+<body>
+
+<h1>Step</h1>
+<div>
+  <svg id="test1"></svg>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.5/nv.d3.js"></script>
+<script src="/build/nvd3-addons.js"></script>
+<script>
+  function datum(name, options) {
+    return Object.assign({}, options || {}, {
+      label: name,
+      value: 10 + Math.ceil(Math.random() * 40)
+    });
+  }
+
+  function dataset(i) {
+    return [
+      datum('foo' + i, {link: {to: [], from: ['bar' + i]}}),
+      datum('bar' + i, {link: {to: ['foo' + i], from: ['baz' + i, 'qux' + i]}}),
+      datum('baz' + i, {link: {to: ['bar' + i], from: ['bar' + i, 'qux' + i]}}),
+      datum('qux' + i, {link: {to: ['bar' + i], from: []}})
+    ];
+  }
+
+  function findLinks(ids, collection) {
+    return (ids || []).map(function(id) { return collection.find(function(d) { return id === d.label; }); });
+  }
+
+  nv.addGraph({
+    generate: function() {
+      var width = null
+        , height = 300
+        , chart
+        ;
+      chart = nv.models.step()
+        .color(['red', 'blue'])
+        .linksTo(function(d, i, c) { return findLinks(d.link.to, c); })
+        .linksFrom(function(d, i, c) { return findLinks(d.link.from, c); })
+        .x(function(d) { return d.value; })
+        .y(function(d) { return d.label; })
+        .width(width)
+        .height(height)
+        .margin({top: 10, right: 50, bottom: 10, left: 50});
+
+      chart.dispatch.on('renderEnd', function() {
+        console.log('render complete');
+      });
+
+      d3.select('#test1')
+        .attr('width', width)
+        .attr('height', height)
+        .datum(dataset(1).concat(dataset(2), dataset(3)))
+        .call(chart);
+      return chart;
+    }
+  });
+</script>
+</body>
+</html>
