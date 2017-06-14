@@ -84,7 +84,8 @@ nv.models.step = function() {
           return {
             path: calculatePath(current, destination),
             transform: function(element) {
-              element.attr('class', 'nv-groupLinkTo-' + index);
+              var classes = 'nv-groupLinkTo nv-groupLinkTo-' + index + ' nv-groupLink nv-groupLink-' + index;
+              element.attr('class', classes);
             }
           };
         });
@@ -92,7 +93,8 @@ nv.models.step = function() {
           return {
             path: calculatePath(source, current),
             transform: function(element) {
-              element.attr('class', 'nv-groupLinkFrom-' + index).attr('stroke-dasharray', '5, 10');
+              var classes = 'nv-groupLinkFrom nv-groupLinkFrom-' + index + ' nv-groupLink nv-groupLink-' + index;
+              element.attr('class', classes).attr('stroke-dasharray', '5, 10');
             }
           };
         });
@@ -105,7 +107,6 @@ nv.models.step = function() {
             .attr('stroke', function() { return color(current, index); })
             .attr('stroke-width', '2')
             .attr('fill', 'none')
-            .style('opacity', 0)
             ;
           link.transform(element);
         });
@@ -130,15 +131,16 @@ nv.models.step = function() {
         .style('fill', color)
         .style('stroke', color)
         .on('click', function(d, i) {
+          wrap.selectAll('.nv-groupLink').classed({selected: false});
+          wrap.selectAll('.nv-groupLink-' + i).classed({selected: true});
           dispatch.elementClick(buildEvent(this, d, i));
         })
         .on('mouseover', function(d, i) {
-          wrap.selectAll('.nv-groupLinkTo-' + i).style('opacity', 0.9);
-          wrap.selectAll('.nv-groupLinkFrom-' + i).style('opacity', 0.5);
+          wrap.selectAll('.nv-groupLink-' + i).classed({preview: true});
           dispatch.elementMouseover(buildEvent(this, d, i));
         })
         .on('mouseout', function(d, i) {
-          wrap.selectAll('.nv-groupLinkTo-' + i + ', ' + '.nv-groupLinkFrom-' + i).style('opacity', 0);
+          wrap.selectAll('.nv-groupLink-' + i).classed({preview: false});
           dispatch.elementMouseout(buildEvent(this, d, i));
         })
         .on('mousemove', function(d, i) {

@@ -11,22 +11,34 @@ gulp.task('clean', function() {
     .pipe(clean());
 });
 
-gulp.task('concat', ['clean'], function() {
+gulp.task('concat-js', function() {
   return gulp.src('src/**/*.js')
     .pipe(concat('nvd3-addons.js'))
     .pipe(wrap('(function(){\n\'use strict\';\n\n<%= contents %>\n})();'))
     .pipe(gulp.dest('build'));
 });
 
-gulp.task('uglify', ['concat'], function() {
+gulp.task('uglify-js', ['concat-js'], function() {
   return gulp.src('build/*.js')
     .pipe(rename({suffix: '.min'}))
     .pipe(uglify('build'))
     .pipe(gulp.dest('build'));
 });
 
-gulp.task('build', function() {
-  return runSequence(['clean', 'uglify']);
+gulp.task('build-js', function() {
+  return runSequence(['concat-js', 'uglify-js']);
 });
 
-gulp.task('default', ['build']);
+gulp.task('concat-css', function() {
+  return gulp.src('src/css/**/*.css')
+    .pipe(concat('nvd3-addons.css'))
+    .pipe(gulp.dest('build'));
+});
+
+gulp.task('build-css', ['concat-css']);
+
+gulp.task('build', ['build-js', 'build-css']);
+
+gulp.task('default', function() {
+return runSequence(['clean', 'build']);
+});

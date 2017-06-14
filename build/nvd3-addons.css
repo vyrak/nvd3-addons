@@ -1,0 +1,14 @@
+.nvd3.nv-step {
+}
+
+.nvd3.nv-step .nv-groupLink {
+  opacity: 0;
+}
+
+.nvd3.nv-step .nv-groupLinkTo.preview, .nvd3.nv-step .nv-groupLinkTo.selected {
+  opacity: 0.9;
+}
+
+.nvd3.nv-step .nv-groupLinkFrom.preview, .nvd3.nv-step .nv-groupLinkFrom.selected {
+  opacity: 0.5;
+}
